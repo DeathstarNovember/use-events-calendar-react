@@ -205,3 +205,39 @@ const useCalendar = (selectedDate?: Date): UseCalendar => {
 }
 
 export default useCalendar
+
+export const defaultCalendar: UseCalendar = {
+  today,
+  weekdays,
+  months,
+  msInADay,
+  msInAMinute,
+  msInAWeek,
+  msInAnHour,
+  currentDay: today,
+  currentWeek: getWeekByDate(today.date),
+  currentYear: today.date.getFullYear(),
+  currentMonth: months[today.date.getMonth()],
+  monthDisplayDays: getMonthDays(months[today.date.getMonth()], today.date.getFullYear()),
+  weekDisplayDays: getWeekDays(today.date),
+  selectDay: () => { },
+  getDayStyle: () => {return {} },
+  getNextWeek: () => {return getWeekByDate(new Date(Number(today.date) + msInAWeek))},
+  getLastWeek: () => {return getWeekByDate(new Date(Number(today.date) - msInAWeek))},
+  loadPrevWeek: () => { },
+  loadNextWeek: () => { },
+  getLastMonth: () => {return getMonthFromDate(new Date(Number(today.date) - msInADay * getDaysInMonth(today.date.getMonth(), today.date.getFullYear()))) },
+  getNextMonth: () => {return getMonthFromDate(new Date(Number(today.date) + msInADay * getDaysInMonth(today.date.getMonth(), today.date.getFullYear()))) },
+  loadPrevMonth: () => { },
+  loadNextMonth: () => { },
+  getWeekByDate,
+  useCalendarEffects: () => { },
+  getFirstDayOfWeek: () => new Date(),
+  getDaysInMonth: () => 0,
+  getMonthFromDate: () => {return months[0]},
+  getFirstDayOfYear: () => new Date(today.date.getFullYear(), 0, 1),
+  getLastDayOfYear,
+  getFirstWeekOfYear,
+  getWeekdayFromWeek, 
+  getWeekNumber
+}

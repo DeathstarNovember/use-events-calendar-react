@@ -41,3 +41,15 @@ const useEvents = (initialEvents?: CalendarEvent[]): UseEvents => {
 }
 
 export default useEvents;
+
+
+export const defaultEvents: UseEvents = {
+  events: [],
+  setEvents: () => { },
+  addEvent: () => { },
+  updateEvent: () => { },
+  deleteEvent: () => { },
+  getHourEvents,
+  getDayEvents,
+  getMonthEvents
+}

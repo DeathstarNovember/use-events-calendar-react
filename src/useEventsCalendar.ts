@@ -5,9 +5,9 @@ import useEvents from "./useEvents"
 const useEventsCalendar = (initialEvents: CalendarEvent[], selectedDate?: Date): UseEventsCalendar => {
   const calendar = useCalendar(selectedDate)
 
-  const events = useEvents(initialEvents)
+  const calendarEvents = useEvents(initialEvents)
 
-  return {...calendar, ...events}
+  return {calendar, calendarEvents}
 
 }
 

@@ -96,7 +96,7 @@ type UseEvents = {
   getMonthEvents: (events: CalendarEvent[], month: Month, year: number) => CalendarEvent[];
 }
 
-type UseEventsCalendar = UseCalendar & UseEvents 
+type UseEventsCalendar = {calendar: UseCalendar,  calendarEvents: UseEvents }
 
 export type {
   CSS,
@@ -107,9 +107,10 @@ export type {
   CalendarEvent,
   NewCalendarEvent,
   DayStyleOptions,
-  DisplayMode, 
   UseCalendar,
   UseEvents,
   UseEventsCalendar
 }
+
+export {DisplayMode}
 

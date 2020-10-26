@@ -6,6 +6,7 @@ import {
   msInADay,
   msInAWeek,
 } from "./data"
+
 import {
   CSS,
   Month,
@@ -20,6 +21,10 @@ import {
   UseEvents,
   UseEventsCalendar
 } from "./types"
+
+import {defaultCalendar} from "./useCalendar"
+import {defaultEvents} from "./useEvents"
+
 import useEventsCalendar from "./useEventsCalendar";
 
 export default useEventsCalendar;
@@ -31,6 +36,8 @@ export {
   msInAnHour,
   msInADay,
   msInAWeek,
+  defaultCalendar,
+  defaultEvents
 }
   
 export type {
@@ -41,9 +48,10 @@ export type {
   DayOfWeek,
   CalendarEvent,
   NewCalendarEvent,
-  DayStyleOptions,
-  DisplayMode, 
+  DayStyleOptions, 
   UseCalendar,
   UseEvents,
   UseEventsCalendar
 }
+
+export { DisplayMode }
