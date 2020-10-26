@@ -1,8 +1,22 @@
 {
-  "version": "0.1.2",
+  "version": "0.1.3",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "description": "An easy to use Calendar and Events hook",
+  "keywords": [
+    "calendar",
+    "events",
+    "dates",
+    "react",
+    "useEvent",
+    "useCalendar",
+    "events calendar",
+    "monthly",
+    "weekly"
+  ],
+  "homepage": "https://github.com/DeathstarNovember/use-events-calendar-react",
+  "bugs": "https://github.com/DeathstarNovember/use-events-calendar-react/issues",
   "files": [
     "dist",
     "src"
