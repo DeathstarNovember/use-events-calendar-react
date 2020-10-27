@@ -4,7 +4,7 @@ install:
 `yarn add use-events-calendar-react`
 
 demo:
-[https://github.com/DeathstarNovember/scheduler]
+https://github.com/DeathstarNovember/scheduler
 
 ## Basic Usage
 
