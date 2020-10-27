@@ -50,9 +50,9 @@ enum DisplayMode {
 }
 
 type UseCalendar = {
-  weekdays: DayOfWeek[],
-  months: Month[],
   today: Day,
+  months: Month[],
+  weekdays: DayOfWeek[],
   currentDay: Day,
   currentWeek: Week,
   currentYear: number,
@@ -76,7 +76,6 @@ type UseCalendar = {
   loadPrevMonth: () => void,
   loadNextMonth: () => void,
   getWeekByDate: (date: Date) => Week,
-  useCalendarEffects: () => void,
   getMonthFromDate: (date: Date) => Month,
   getFirstDayOfYear: (year: number) => Date,
   getLastDayOfYear: (year: number) => Date,

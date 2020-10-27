@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import {
   months,
   weekdays,
@@ -35,35 +35,25 @@ const useCalendar = (selectedDate?: Date): UseCalendar => {
 
   const [currentDay, setCurrentDay] = useState<Day>(selectedDay || today)
 
-  const [currentWeek, setCurrentWeek] = useState<Week>(getWeekByDate(currentDay.date))
+  const currentWeek = getWeekByDate(currentDay.date)
 
-  const [currentYear, setCurrentYear] = useState<number>(currentDay.date.getFullYear())
+  const currentYear = currentDay.date.getFullYear()
 
-  const [currentMonth, setCurrentMonth] = useState<Month>(
-    months[currentDay.date.getMonth()],
-  )
+  const currentMonth = months[currentDay.date.getMonth()]
 
-  const [currentMonthDays, setCurrentMonthDays] = useState<Day[]>(
-    getMonthDays(currentMonth, currentYear),
-  )
+  const currentMonthDays = getMonthDays(currentMonth, currentYear)
   
-  const [weekDisplayDays, setWeekDisplayDays] = useState<Day[]>(
-    getWeekDays(currentDay.date),
-  )
+  const weekDisplayDays = getWeekDays(currentDay.date)
 
-  const [prevMonthDays, setPrevMonthDays] = useState<Day[]>(
-    getPrevMonthDisplayDays(currentMonth, currentYear),
-  )
+  const prevMonthDays = getPrevMonthDisplayDays(currentMonth, currentYear)
 
-  const [nextMonthDays, setNextMonthDays] = useState<Day[]>(
-    getNextMonthDisplayDays(currentMonth, currentYear),
-  )
+  const nextMonthDays = getNextMonthDisplayDays(currentMonth, currentYear)
 
-  const [monthDisplayDays, setMonthDisplayDays] = useState<Day[]>([
+  const monthDisplayDays = [
     ...prevMonthDays,
     ...currentMonthDays,
     ...nextMonthDays,
-  ])
+  ]
 
   const getNextWeek = (): Week => {
     return getWeekByDate(new Date(Number(currentWeek.firstDay) + msInAWeek))
@@ -72,8 +62,7 @@ const useCalendar = (selectedDate?: Date): UseCalendar => {
     return getWeekByDate(new Date(Number(currentWeek.firstDay) - msInAWeek))
   }
 
-  const getNextMonth = (): Month =>
-  months.find((month) => month.id === (currentMonth.id + 1) % 12) || months[1]
+  const getNextMonth = (): Month => months[(currentMonth.id + 1) % 12]
 
   const getLastMonth = (): Month =>
     months.find((month) => (month.id === currentMonth.id - 1)) || months[11]
@@ -126,45 +115,6 @@ const useCalendar = (selectedDate?: Date): UseCalendar => {
     setCurrentDay(day)
   }
 
-  const useCalendarEffects = (): void => useEffect(() => {
-    setCurrentWeek(getWeekByDate(currentDay.date))
-    setWeekDisplayDays(getWeekDays(getFirstDayOfWeek(currentDay.date)))
-    setCurrentMonth(months[currentDay.date.getMonth()])
-    setCurrentYear(currentDay.date.getFullYear())
-    setCurrentMonthDays(
-      getMonthDays(
-        months[currentDay.date.getMonth()],
-        currentDay.date.getFullYear(),
-      ),
-    )
-    setPrevMonthDays(
-      getPrevMonthDisplayDays(
-        months[currentDay.date.getMonth()],
-        currentDay.date.getFullYear(),
-      ),
-    )
-    setNextMonthDays(
-      getNextMonthDisplayDays(
-        months[currentDay.date.getMonth()],
-        currentDay.date.getFullYear(),
-      ),
-    )
-    setMonthDisplayDays([
-      ...getPrevMonthDisplayDays(
-        months[currentDay.date.getMonth()],
-        currentDay.date.getFullYear(),
-      ),
-      ...getMonthDays(
-        months[currentDay.date.getMonth()],
-        currentDay.date.getFullYear(),
-      ),
-      ...getNextMonthDisplayDays(
-        months[currentDay.date.getMonth()],
-        currentDay.date.getFullYear(),
-      ),
-    ])
-  }, [currentDay])
-
   const calendar: UseCalendar = {
     today,
     months,
@@ -192,7 +142,6 @@ const useCalendar = (selectedDate?: Date): UseCalendar => {
     loadNextWeek,
     loadPrevMonth,
     loadNextMonth,
-    useCalendarEffects,
     getMonthFromDate,
     getFirstDayOfYear,
     getLastDayOfYear,
@@ -231,7 +180,6 @@ export const defaultCalendar: UseCalendar = {
   loadPrevMonth: () => { },
   loadNextMonth: () => { },
   getWeekByDate,
-  useCalendarEffects: () => { },
   getFirstDayOfWeek: () => new Date(),
   getDaysInMonth: () => 0,
   getMonthFromDate: () => {return months[0]},
