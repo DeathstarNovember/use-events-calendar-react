@@ -1,11 +1,12 @@
 import {
   months,
   weekdays,
+  msInASecond,
   msInAMinute,
   msInAnHour,
   msInADay,
   msInAWeek,
-} from "./data"
+} from './data';
 
 import {
   CSS,
@@ -16,30 +17,31 @@ import {
   CalendarEvent,
   NewCalendarEvent,
   DayStyleOptions,
-  DisplayMode, 
+  DisplayMode,
   UseCalendar,
   UseEvents,
-  UseEventsCalendar
-} from "./types"
+  UseEventsCalendar,
+} from './types';
 
-import {defaultCalendar} from "./useCalendar"
-import {defaultEvents} from "./useEvents"
+import { defaultCalendar } from './useCalendar';
+import { defaultEvents } from './useEvents';
 
-import useEventsCalendar from "./useEventsCalendar";
+import useEventsCalendar from './useEventsCalendar';
 
 export default useEventsCalendar;
 
 export {
   months,
   weekdays,
+  msInASecond,
   msInAMinute,
   msInAnHour,
   msInADay,
   msInAWeek,
   defaultCalendar,
-  defaultEvents
-}
-  
+  defaultEvents,
+};
+
 export type {
   CSS,
   Month,
@@ -48,10 +50,10 @@ export type {
   DayOfWeek,
   CalendarEvent,
   NewCalendarEvent,
-  DayStyleOptions, 
+  DayStyleOptions,
   UseCalendar,
   UseEvents,
-  UseEventsCalendar
-}
+  UseEventsCalendar,
+};
 
-export { DisplayMode }
+export { DisplayMode };
