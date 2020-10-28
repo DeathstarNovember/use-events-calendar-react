@@ -1,32 +1,48 @@
-import { useState } from "react"
+import { useState } from 'react';
 
-import { CalendarEvent, NewCalendarEvent, UseEvents } from "./types"
-import { getDayEvents, getHourEvents, getMonthEvents} from "./utils/eventsUtils"
+import {
+  CalendarEvent,
+  NewCalendarEvent,
+  NewRecurringCalendarEvent,
+  RecurringCalendarEvent,
+  UseEvents,
+} from './types';
 
-const useEvents = (initialEvents?: CalendarEvent[]): UseEvents => {
-  const [events, setEvents] = useState<CalendarEvent[]>(initialEvents || []);
+import {
+  getDayEvents,
+  getHourEvents,
+  getMonthEvents,
+} from './utils/eventsUtils';
 
-  const addEvent = (newEvent: NewCalendarEvent): void => {
-    setEvents(
-      [...events, {...newEvent, id: Date.now().toString()}]
-    )
-  }
+const useEvents = <E>(
+  initialEvents?: (CalendarEvent<E> | RecurringCalendarEvent<E>)[]
+): UseEvents<E> => {
+  const [events, setEvents] = useState<CalendarEvent<E>[]>(initialEvents || []);
 
-  const updateEvent = (event: CalendarEvent): void => {
-    const eventToReplace = events.find(e => e.id === event.id);
+  const addEvent = (
+    newEvent: NewCalendarEvent<E> | NewRecurringCalendarEvent<E>
+  ): void => {
+    const newUCE = {
+      ...newEvent,
+      id: Date.now().toString(),
+    } as CalendarEvent<E> | RecurringCalendarEvent<E>;
+    setEvents([...events, newUCE]);
+  };
 
-    if (!eventToReplace) throw new Error(`event with id ${event.id} does not exist.`)
+  const updateEvent = (event: CalendarEvent<E>): void => {
+    if (!events.find((e) => e.id === event.id))
+      throw new Error(`event with id ${event.id} does not exist.`);
 
-    setEvents([...events.filter(e => e.id !== event.id), event])
-  }
+    setEvents([...events.filter((e) => e.id !== event.id), event]);
+  };
 
-  const deleteEvent = (event: CalendarEvent): void => {
-    const newEvents = events.filter(e => e.id !== event.id)
+  const deleteEvent = (event: CalendarEvent<E>): void => {
+    const newEvents = events.filter((e) => e.id !== event.id);
 
     setEvents(newEvents);
-  } 
+  };
 
-  const calendarEvents: UseEvents = {
+  const calendarEvents: UseEvents<E> = {
     events,
     setEvents,
     addEvent,
@@ -34,22 +50,21 @@ const useEvents = (initialEvents?: CalendarEvent[]): UseEvents => {
     deleteEvent,
     getHourEvents,
     getDayEvents,
-    getMonthEvents
-  }
+    getMonthEvents,
+  };
 
-  return calendarEvents
-}
+  return calendarEvents;
+};
 
 export default useEvents;
 
-
-export const defaultEvents: UseEvents = {
+export const defaultEvents: UseEvents<{}> = {
   events: [],
-  setEvents: () => { },
-  addEvent: () => { },
-  updateEvent: () => { },
-  deleteEvent: () => { },
+  setEvents: () => {},
+  addEvent: () => {},
+  updateEvent: () => {},
+  deleteEvent: () => {},
   getHourEvents,
   getDayEvents,
-  getMonthEvents
-}
+  getMonthEvents,
+};
