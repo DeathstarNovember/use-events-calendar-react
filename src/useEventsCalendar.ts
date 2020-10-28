@@ -1,14 +1,24 @@
-import { CalendarEvent, UseEventsCalendar } from "./types"
-import useCalendar from "./useCalendar"
-import useEvents from "./useEvents"
+import {
+  CalendarEvent,
+  RecurringCalendarEvent,
+  UseEventsCalendar,
+} from './types';
+import useCalendar from './useCalendar';
+import useEvents from './useEvents';
+import useSchedule from './useRecurringEvents';
 
-const useEventsCalendar = (initialEvents: CalendarEvent[], selectedDate?: Date): UseEventsCalendar => {
-  const calendar = useCalendar(selectedDate)
+const useEventsCalendar = <E>(
+  initialEvents: (CalendarEvent<E> | RecurringCalendarEvent<E>)[],
+  selectedDate?: Date
+): UseEventsCalendar<E> => {
+  const calendar = useCalendar(selectedDate);
 
-  const calendarEvents = useEvents(initialEvents)
+  const calendarEvents = useEvents<E>(initialEvents);
 
-  return {calendar, calendarEvents}
+  const useRecurringEvent = (event: RecurringCalendarEvent<E>) =>
+    useSchedule<E>(event);
 
-}
+  return { calendar, calendarEvents, useRecurringEvent };
+};
 
 export default useEventsCalendar;
