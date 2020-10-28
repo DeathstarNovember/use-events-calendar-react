@@ -25,7 +25,9 @@ const weekdays: DayOfWeek[] = [
   { name: 'Saturday', shortName: 'Sat', id: 6 },
 ]
 
-const msInAMinute = 60000
+const msInASecond = 1000
+
+const msInAMinute = msInASecond * 60
 
 const msInAnHour = msInAMinute * 60;
 
@@ -36,6 +38,7 @@ const msInAWeek = msInADay * 7
 export {
   months,
   weekdays,
+  msInASecond,
   msInAMinute,
   msInAnHour,
   msInADay,
