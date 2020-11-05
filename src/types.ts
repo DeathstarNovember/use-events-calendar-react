@@ -26,7 +26,7 @@ type InclusionRule = {
   interval?: number;
   weekdays?: number[];
   limit?: number;
-  serial: string;
+  serial?: string;
 };
 
 type ExclusionRule = {

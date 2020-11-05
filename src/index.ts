@@ -21,6 +21,13 @@ import {
   UseCalendar,
   UseEvents,
   UseEventsCalendar,
+  ExclusionRule,
+  InclusionRule,
+  NewRecurringCalendarEvent,
+  RecurringCalendarEvent,
+  Schedule,
+  UseRecurringEvent,
+  RecurranceFrequency,
 } from './types';
 
 import { defaultCalendar } from './useCalendar';
@@ -49,11 +56,17 @@ export type {
   Day,
   DayOfWeek,
   CalendarEvent,
+  RecurringCalendarEvent,
   NewCalendarEvent,
+  NewRecurringCalendarEvent,
+  Schedule,
+  InclusionRule,
+  ExclusionRule,
   DayStyleOptions,
   UseCalendar,
   UseEvents,
+  UseRecurringEvent,
   UseEventsCalendar,
 };
 
-export { DisplayMode };
+export { DisplayMode, RecurranceFrequency };

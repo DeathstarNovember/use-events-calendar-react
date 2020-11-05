@@ -4,7 +4,7 @@ import { Providers } from './Providers';
 import { MonthCalendar } from './MonthCalendar';
 import { WeekCalendar } from './WeekCalendar';
 
-export type CustomEventProps = any;
+export type CustomEventProps = {};
 
 const App = () => {
   const [displayMode, setDisplayMode] = useState<DisplayMode>(

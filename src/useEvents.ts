@@ -25,7 +25,7 @@ const useEvents = <E>(
     const newUCE = {
       ...newEvent,
       id: Date.now().toString(),
-    } as CalendarEvent<E> | RecurringCalendarEvent<E>;
+    } as CalendarEvent<E>;
     setEvents([...events, newUCE]);
   };
 

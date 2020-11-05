@@ -1,7 +1,18 @@
 import React, { useContext, useRef } from 'react';
-import { Day, msInAnHour, NewCalendarEvent } from 'use-events-calendar-react';
+import useEventsCalendar, {
+  Day,
+  msInAnHour,
+  NewCalendarEvent,
+} from 'use-events-calendar-react';
+import { CustomEventProps } from './App';
 import { EventCard } from './EventCard';
 import { CalendarContext, EventsContext } from './Providers';
+
+function nonNullable<TValue>(
+  value: TValue | null | undefined
+): value is TValue {
+  return value !== null && value !== undefined;
+}
 
 type CalendarDayProps = {
   day: Day;
@@ -17,6 +28,16 @@ const hours: Hour[] = new Array(24)
   .fill(0)
   .map((_, index) => ({ h24: index, h12: index % 12 }));
 
+const getDaysSinceBOT = (date: Date) => {
+  const intDate = new Date(date);
+  intDate.setHours(0, 0, 0, 0);
+  return Math.floor(Number(intDate) / 86400000);
+};
+
+const daysAreEqual = (day1: Date, day2: Date) => {
+  return getDaysSinceBOT(day1) === getDaysSinceBOT(day2);
+};
+
 export const CalendarDay: React.FC<CalendarDayProps> = ({
   day,
   showHours = false,
@@ -29,9 +50,26 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({
     events: { events, addEvent, getDayEvents },
   } = useContext(EventsContext);
 
+  const { useRecurringEvent } = useEventsCalendar<{}>([]);
+
+  const recurringEvents = events
+    .filter((event) => !daysAreEqual(event.startDate, day.date))
+    .map((event) => {
+      if ('schedule' in event && event.schedule.recurs) return event;
+      return null;
+    })
+    .filter(nonNullable);
+
+  const occurringToday = recurringEvents
+    .map((rEvent) => {
+      return useRecurringEvent(rEvent).between(day.date, day.date);
+    })
+    .filter((evts) => evts.length)
+    .flat();
+
   const dayEvents = getDayEvents(events, day);
 
-  const selected = currentDay.date.toDateString() === day.date.toDateString();
+  const selected = daysAreEqual(currentDay.date, day.date);
 
   const dayTileRef = useRef<HTMLDivElement>(null);
 
@@ -101,7 +139,7 @@ export const CalendarDay: React.FC<CalendarDayProps> = ({
         </div>
       ) : (
         <div>
-          {dayEvents.map((event, eventIndex) => (
+          {[...dayEvents, ...occurringToday].map((event, eventIndex) => (
             <EventCard
               key={`event${eventIndex}${currentDay.weekday.name}`}
               event={event}
@@ -161,16 +199,11 @@ const HourTile: React.FC<{
       0
     );
     const endDate = getNextHour(startDate);
-    const newEvent: NewCalendarEvent<{}, {}, {}, {}> = {
+    const newEvent: NewCalendarEvent<CustomEventProps> = {
       title: 'New Event',
       startDate,
       endDate,
       allDay: false,
-      schedule: {
-        recurs: false,
-        inclusion: [],
-        exclusion: [],
-      },
     };
     addEvent(newEvent);
   };

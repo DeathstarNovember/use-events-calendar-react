@@ -15,7 +15,7 @@ const useEventsCalendar = <E>(
 
   const calendarEvents = useEvents<E>(initialEvents);
 
-  const useRecurringEvent = (event: RecurringCalendarEvent<E>) =>
+  const useRecurringEvent = <E>(event: RecurringCalendarEvent<E>) =>
     useSchedule<E>(event);
 
   return { calendar, calendarEvents, useRecurringEvent };

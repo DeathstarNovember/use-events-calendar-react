@@ -1,11 +1,18 @@
 import React, { useContext, useState } from 'react';
 import { Modal } from './Modal';
 import { EventsContext } from './Providers';
-import { msInADay, CalendarEvent } from 'use-events-calendar-react';
+import {
+  msInADay,
+  CalendarEvent,
+  RecurranceFrequency,
+  RecurringCalendarEvent,
+} from 'use-events-calendar-react';
 import { CustomEventProps } from './App';
 
 type EventFormProps = {
-  event: CalendarEvent<CustomEventProps>;
+  event:
+    | CalendarEvent<CustomEventProps>
+    | RecurringCalendarEvent<CustomEventProps>;
   hideForm: () => void;
   visible: boolean;
 };
@@ -90,40 +97,100 @@ export const EventForm: React.FC<EventFormProps> = ({
 
   const [allDay, setAllDay] = useState(true);
 
-  const [title, setTitle] = useState(event.title);
+  const [title, setTitle] = useState<string>(event.title);
 
-  const [description, setDescription] = useState(event.description);
+  const [description, setDescription] = useState<string>(
+    event.description || ''
+  );
 
-  const [startDateInput, setStartDateInput] = useState(
+  const [startDateInput, setStartDateInput] = useState<string>(
     formatDate(event.startDate)
   );
-  const [startDate, setStartDate] = useState(event.startDate);
-  const [startTimeHInput, setStartTimeHInput] = useState(
+
+  const [startDate, setStartDate] = useState<Date>(event.startDate);
+  const [startTimeHInput, setStartTimeHInput] = useState<number>(
     event.startDate.getHours()
   );
-  const [endTimeHInput, setEndTimeHInput] = useState(event.endDate.getHours());
-  const [startTimeMInput, setStartTimeMInput] = useState(
+
+  const [endTimeHInput, setEndTimeHInput] = useState<number>(
+    event.endDate.getHours()
+  );
+
+  const [startTimeMInput, setStartTimeMInput] = useState<number>(
     event.startDate.getMinutes()
   );
-  const [endTimeMInput, setEndTimeMInput] = useState(
+
+  const [endTimeMInput, setEndTimeMInput] = useState<number>(
     event.endDate.getMinutes()
   );
 
-  const [endDateInput, setEndDateInput] = useState(
-    event.endDate ? formatDate(event.endDate) : undefined
+  const [endDateInput, setEndDateInput] = useState<string>(
+    event.endDate ? formatDate(event.endDate) : ''
   );
 
-  const [endDate, setEndDate] = useState(event.endDate);
+  const [endDate, setEndDate] = useState<Date>(event.endDate);
+
+  const [recurs, setRecurs] = useState<boolean>(
+    'schedule' in event ? event.schedule.recurs : false
+  );
+
+  const [frequency, setFrequency] = useState<RecurranceFrequency | undefined>(
+    'schedule' in event && recurs
+      ? event.schedule.inclusion[0]?.frequency
+      : undefined
+  );
+
+  const [weekdays, setWeekdays] = useState<string>(
+    'schedule' in event
+      ? event.schedule.inclusion[0]?.weekdays?.join(',') || ''
+      : ''
+  );
+
+  const [limit, setLimit] = useState<number | undefined>(
+    'schedule' in event ? event.schedule.inclusion[0]?.limit : undefined
+  );
+
+  const [interval, setInterval] = useState<number | undefined>(
+    'schedule' in event ? event.schedule.inclusion[0]?.interval || 1 : 1
+  );
+
+  const getWeekdaysFromString = (string: string): number[] => {
+    return string
+      .split('')
+      .filter((char, charIndex) => charIndex < 7 && Number(char))
+      .map((char) => Number(char) % 7)
+      .filter((v, i, a) => a.indexOf(v) === i);
+  };
 
   const handleSubmit = (e: SubmitEvent) => {
     e.preventDefault();
-    const value: CalendarEvent<CustomEventProps> = {
+    const value:
+      | CalendarEvent<CustomEventProps>
+      | RecurringCalendarEvent<CustomEventProps> = {
       ...event,
       title,
       description,
       startDate,
       endDate,
       allDay,
+      ...(recurs
+        ? {
+            schedule: {
+              recurs,
+              inclusion: [
+                {
+                  recurs,
+                  frequency,
+                  limit,
+                  weekdays: weekdays
+                    ? getWeekdaysFromString(weekdays)
+                    : undefined,
+                },
+              ],
+              exclusion: [],
+            },
+          }
+        : undefined),
     };
     updateEvent(value);
     hideForm();
@@ -153,6 +220,7 @@ export const EventForm: React.FC<EventFormProps> = ({
     const value = getInputValue(e);
     setStartDateInput(value);
   };
+
   const changeStartHInput = (e: InputChangeEvent) => {
     const value = getInputNumberValue(e);
     setStartTimeHInput(value);
@@ -161,6 +229,7 @@ export const EventForm: React.FC<EventFormProps> = ({
       newStartDate.setHours(value);
     }
   };
+
   const changeStartMInput = (e: InputChangeEvent) => {
     const value = getInputNumberValue(e);
     setStartTimeMInput(value);
@@ -169,6 +238,7 @@ export const EventForm: React.FC<EventFormProps> = ({
       newStartDate.setMinutes(value);
     }
   };
+
   const changeEndHInput = (e: InputChangeEvent) => {
     const value = getInputNumberValue(e);
     setEndTimeHInput(value);
@@ -177,6 +247,7 @@ export const EventForm: React.FC<EventFormProps> = ({
       newEndDate.setHours(value);
     }
   };
+
   const changeEndMInput = (e: InputChangeEvent) => {
     const value = getInputNumberValue(e);
     setEndTimeMInput(value);
@@ -215,7 +286,7 @@ export const EventForm: React.FC<EventFormProps> = ({
     const candidateEndDate = getDateFromFormattedDate(value);
 
     if (!candidateEndDate) {
-      setEndDateInput(undefined);
+      setEndDateInput('');
       return;
     }
 
@@ -224,7 +295,7 @@ export const EventForm: React.FC<EventFormProps> = ({
     const formatIsValid = !isNaN(candidateEndDate.getDay());
 
     if (!formatIsValid) {
-      setEndDateInput(undefined);
+      setEndDateInput('');
       return;
     }
 
@@ -232,6 +303,30 @@ export const EventForm: React.FC<EventFormProps> = ({
       setEndDate(candidateEndDate);
       setEndDateInput(formattedDate);
     }
+  };
+
+  const toggleRepeat = () => {
+    setRecurs(!recurs);
+  };
+
+  const changeFrequency = (e: React.FormEvent<HTMLOptionElement>) => {
+    const newFrequency =
+      RecurranceFrequency[e.currentTarget.value as RecurranceFrequency];
+    setFrequency(newFrequency);
+  };
+
+  const changeLimit = (e: InputChangeEvent) => {
+    const newLimit = Number(e.currentTarget.value);
+    if (!isNaN(newLimit)) setLimit(newLimit);
+  };
+  const changeInterval = (e: InputChangeEvent) => {
+    const newInterval = Number(e.currentTarget.value);
+    if (!isNaN(newInterval)) setInterval(newInterval);
+  };
+
+  const changeWeekdays = (e: InputChangeEvent) => {
+    const newWeekdays = getWeekdaysFromString(e.currentTarget.value);
+    setWeekdays(newWeekdays.join(','));
   };
 
   if (!visible) return null;
@@ -307,6 +402,41 @@ export const EventForm: React.FC<EventFormProps> = ({
             </div>
           ) : null}
         </div>
+        {recurs ? (
+          <div>
+            <select name="frequency">
+              {Object.keys(RecurranceFrequency).map((freq, freqIndex) => (
+                <option
+                  key={`frequencyOption${freq}${freqIndex}`}
+                  value={freq}
+                  onChange={changeFrequency}
+                >
+                  {freq.toLowerCase()}
+                </option>
+              ))}
+            </select>
+            <Input
+              name="recurInterval"
+              value={interval}
+              label="Interval"
+              onChange={changeInterval}
+            />
+            <Input
+              name="recurLimit"
+              value={limit}
+              label="Limit"
+              onChange={changeLimit}
+            />
+            <Input
+              name="weekdays"
+              value={weekdays}
+              label="Weekday ids"
+              onChange={changeWeekdays}
+            />
+          </div>
+        ) : (
+          <button onClick={toggleRepeat}>repeat</button>
+        )}
         <div>
           <button style={{ width: '100%' }} type="submit">
             save
